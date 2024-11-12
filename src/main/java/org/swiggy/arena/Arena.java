@@ -2,13 +2,19 @@ package org.swiggy.arena;
 
 
 public class Arena {
-    private final Dice attackDice;
-    private final Dice defenseDice;
+    private Dice attackDice ;
+    private Dice defenseDice ;
 
     public Arena() {
         this.attackDice = new Dice();
         this.defenseDice = new Dice();
     }
+
+    public Arena(Dice mockAttackDice, Dice mockDefenseDice) {
+        this.attackDice = attackDice;
+        this.defenseDice = defenseDice;
+    }
+
 
     public void fight(Player player1, Player player2) {
         Player attacker = (player1.getHealth() <= player2.getHealth()) ? player1 : player2;
@@ -25,7 +31,7 @@ public class Arena {
         System.out.println("Winner: " + (attacker.isAlive() ? attacker.getName() : defender.getName()));
     }
 
-    private void performAttack(Player attacker, Player defender) {
+    public void performAttack(Player attacker, Player defender) {
         int attackRoll = attackDice.roll();
         int defenseRoll = defenseDice.roll();
 
