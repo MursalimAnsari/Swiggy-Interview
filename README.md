@@ -11,13 +11,12 @@ The project consists of the following components:
 
 * Player.java: Defines the attributes and behavior of a player.
 
-*  Match.java: Manages the interaction between two players during a match.
+*  Arena.java: Manages the interaction between two players during a match.
+  
+*  Game.java: Entry point of the application where you can simulate matches.
 
-*  MagicalArena.java: Orchestrates matches within the arena.
-
-*  MagicalArena.java: Entry point of the application where you can simulate matches.
-
-*  PlayerTest.java, MatchTest.java,MagicalArenaTest.java.: Unit tests for corresponding classes.
+*  Arena.java.: Unit tests for corresponding classes.
+  
 ## Getting Started
 To run the Magical Arena simulation, follow these steps:
 
@@ -28,36 +27,30 @@ To run the Magical Arena simulation, follow these steps:
 1. Locate the MagicalArena.java file in the project structure.
 2. Run the main() method in MagicalArena.java to start the application.
 3. Follow the prompts or input required parameters to simulate matches in the Magical Arena.
-## MagicalArena Class 
+## Game Class 
 Explanation:
 
-* The MagicalArena class serves as the entry point for the application.
+* The Game class serves as the entry point for the application.
 * In the main() method, it creates two players, playerA and playerB, with their respective attributes: health, strength, and attack.
 * It then initiates a match between playerA and playerB using the Match class.
 * After the match is completed, it checks the health of playerA to determine the winner.
 * If playerA's health is less than or equal to 0, it declares playerB as the winner. Otherwise, it declares playerA as the winner.
 
 
-        public class MagicalArena {
-	    public static void main(String[] args) {
-		
-        **for static data we can use the below code**
-        Player playerA = new Player(50, 5, 10);
-        Player playerB = new Player(100, 10, 5);
-        
-        //calling th Match class by creating the instance of that class
-        Match match = new Match(playerA, playerB);
-        match.fight();
+package org.swiggy;
 
-        //printing the output
-        if (playerA.getHealth() <= 0) {
-                System.out.println("Player B wins!");
-            } else {
-                System.out.println("Player A wins!");
-            }
+import org.swiggy.arena.Arena;
+import org.swiggy.arena.Player;
 
-        }
-        }
+public class Game {
+    public static void main(String[] args) {
+        Player playerA = new Player("Player A", 50, 5, 10);
+        Player playerB = new Player("Player B", 100, 10, 5);
+
+        Arena arena = new Arena();
+        arena.fight(playerA, playerB);
+    }
+}
 
 
 ## Player Class
@@ -74,45 +67,47 @@ The Player class encapsulates the attributes of a player in the Magical Arena. T
 * The class has a constructor that initializes a Player object with specific values for health, strength, and attack.
 * It sets the initial values of the player's attributes based on the parameters passed to the constructor.
 
-        package com.arena;
+package org.swiggy.arena;
 
-        public class Player {
-	
-	    //Defined the mentioned attribute given in the game
-        private int health;
-        private int strength;
-        private int attack;
-    
-        //Creating getter and setter
-        public int getHealth() {
-            return health;
-        }
-        public void setHealth(int health) {
-            this.health = health;
-        }
-        public int getStrength() {
-            return strength;
-        }
-        public void setStrength(int strength) {
-            this.strength = strength;
-        }
-        public int getAttack() {
-            return attack;
-        }
-        public void setAttack(int attack) {
-            this.attack = attack;
-        }
-        
-        //Parameterized constructor
-        public Player(int health, int strength, int attack) {
-            super();
-            this.health = health;
-            this.strength = strength;
-            this.attack = attack;
-	    } 
-        }
+public class Player {
+     private final String name;
+     private int health;
+     private final int strength;
+     private final int attack;
 
-## Match Class
+     public Player(String name, int health, int strength, int attack) {
+          this.name = name;
+          this.health = health;
+          this.strength = strength;
+          this.attack = attack;
+     }
+
+     public String getName() {
+          return name;
+     }
+
+     public int getHealth() {
+          return health;
+     }
+
+     public int getStrength() {
+          return strength;
+     }
+
+     public int getAttack() {
+          return attack;
+     }
+
+     public void reduceHealth(int damage) {
+          health = Math.max(0, health - damage);
+     }
+
+     public boolean isAlive() {
+          return health > 0;
+     }
+}
+
+## Arena Class
 Explaination:
 
 1. Instance Variables:
@@ -135,66 +130,90 @@ Explaination:
 * Switches roles for the next turn, ensuring that the attacker and defender alternate.
 
 
-        import java.util.Random;
+        package org.swiggy.arena;
 
-        public class Match {
-	
-	    private Player attacker;
-        private Player defender;
-        private Random random;
-    
-        public Match(Player player1, Player player2) {
-    	
-        this.attacker = player1.getHealth() < player2.getHealth() ? player1 : player2;
-        this.defender = player1.getHealth() < player2.getHealth() ? player2 : player1;
+public class Player {
+     private final String name;
+     private int health;
+     private final int strength;
+     private final int attack;
+
+     public Player(String name, int health, int strength, int attack) {
+          this.name = name;
+          this.health = health;
+          this.strength = strength;
+          this.attack = attack;
+     }
+
+     public String getName() {
+          return name;
+     }
+
+     public int getHealth() {
+          return health;
+     }
+
+     public int getStrength() {
+          return strength;
+     }
+
+     public int getAttack() {
+          return attack;
+     }
+
+     public void reduceHealth(int damage) {
+          health = Math.max(0, health - damage);
+     }
+
+     public boolean isAlive() {
+          return health > 0;
+     }
+}
+
+## Dice Class
+Explaination:
+
+1. Attributes:
+
+The Player class encapsulates the attributes of a player in the Dice . These attributes include:
+* SIDES: Reperesenting a Number.
+* random: Denotes the random generator for the Arena
+* 2. Constructor:
+
+* The class has a constructor that initializes a Dice object with specific values for SIDES, and random number.
+* roll() method: Denotes what number is getting by the player after rolling the dice.
+
+  package org.swiggy.arena;
+
+
+import java.util.Random;
+
+public class Dice {
+    private static final int SIDES = 6;
+    private final Random random;
+
+    public Dice() {
         this.random = new Random();
-        }
-    
-        public void fight() {
-    	
-    	//in a loop as long as both the attacker and defender have health greater than 0. 
-    	//Once a player's health drops to 0 or below, the loop exits, indicating the end of the match.
-        while (attacker.getHealth() > 0 && defender.getHealth() > 0) {
-        	
-        	//Dice Rolling
-            int attackRoll = random.nextInt(6) + 1;
-            int defendRoll = random.nextInt(6) + 1;
+    }
 
-            //Attack damage is calculated by multiplying the attack roll with the attacker's attack attribute.
-            int attackDamage = attackRoll * attacker.getAttack();
-            
-            //Defense damage is calculated by multiplying the defense roll with the defender's strength attribute.
-            int defendDamage = defendRoll * defender.getStrength();
-            
-            //The net damage is computed by subtracting the defense damage from the attack damage.
-            int netDamage = Math.max(0, attackDamage - defendDamage);
-            
-            //The net damage is deducted from the defender's health. 
-            //If the defender's health drops to 0 or below, the loop exits, indicating the end of the match.
-            defender.setHealth(defender.getHealth() - netDamage);
-
-            // Switch roles for next turn
-            Player temp = attacker;
-            attacker = defender;
-            defender = temp;
-        }
-        }
-
-        }
+    public int roll() {
+        return random.nextInt(SIDES) + 1;
+    }
+}
 
 
 ## Unit Testing
 The project includes a suite of unit tests to ensure the correctness and reliability of the codebase.
 
-* PlayerTest.java: Tests the attributes and behavior of the Player class.
-* MatchTest.java: Tests the functionality of the Match class.
-* MagialArenaTest:Test the functionality of the MagicalArena class
+* ArenaTest:Test the functionality of the MagicalArena class
 
 
 To run the unit tests:
 
 * Navigate to the corresponding test files in the src/test directory.
 * Run each test class or individual test methods using your IDE's testing framework.
+
+
 ## PlayerTest
 Explanation:
 
