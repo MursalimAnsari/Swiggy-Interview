@@ -15,7 +15,7 @@ The project consists of the following components:
   
 *  Game.java: Entry point of the application where you can simulate matches.
 
-*  Arena.java.: Unit tests for corresponding classes.
+*  ArenaTest.java.: Unit tests for corresponding classes.
   
 ## Getting Started
 To run the Magical Arena simulation, follow these steps:
@@ -24,7 +24,7 @@ To run the Magical Arena simulation, follow these steps:
 2. Open the project in your preferred Java IDE, such as Eclipse or IntelliJ IDEA.
 ## Running the Application
 
-1. Locate the MagicalArena.java file in the project structure.
+1. Locate the Game.java file in the project structure.
 2. Run the main() method in MagicalArena.java to start the application.
 3. Follow the prompts or input required parameters to simulate matches in the Magical Arena.
 ## Game Class 
@@ -130,7 +130,7 @@ Explaination:
 * Switches roles for the next turn, ensuring that the attacker and defender alternate.
 
 
-        package org.swiggy.arena;
+package org.swiggy.arena;
 
 public class Player {
      private final String name;
@@ -183,9 +183,7 @@ The Player class encapsulates the attributes of a player in the Dice . These att
 * The class has a constructor that initializes a Dice object with specific values for SIDES, and random number.
 * roll() method: Denotes what number is getting by the player after rolling the dice.
 
-  package org.swiggy.arena;
-
-
+package org.swiggy.arena;
 import java.util.Random;
 
 public class Dice {
@@ -238,6 +236,7 @@ Explanation:
 * The first assertEquals() statement checks if the player's initial health is 100.
 * The second assertEquals() statement checks if the player's initial strength is 10.
 * The third assertEquals() statement checks if the player's initial attack is 5.
+* Mockito is used for mocking the objects.
 
 5. Purpose:
 
@@ -246,7 +245,7 @@ Explanation:
 
 Overall, this test case contributes to the quality and reliability of the codebase by providing automated testing for the Player class constructor. It helps catch potential bugs and ensures that the Player class meets the expected behavior defined by its specification.
 
- package org.swiggy;
+package org.swiggy;
 
 import org.swiggy.arena.Arena;
 import org.swiggy.arena.Dice;
