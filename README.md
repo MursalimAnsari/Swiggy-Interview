@@ -227,76 +227,104 @@ Explanation:
 
 Overall, this test case contributes to the quality and reliability of the codebase by providing automated testing for the Player class constructor. It helps catch potential bugs and ensures that the Player class meets the expected behavior defined by its specification.
 
-    package com.arena;
-    import static org.junit.jupiter.api.Assertions.*;
-    import org.junit.jupiter.api.Test;
+ package org.swiggy;
 
-    class PlayerTest {
+import org.swiggy.arena.Arena;
+import org.swiggy.arena.Dice;
+import org.swiggy.arena.Player;
+import org.testng.annotations.Test;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
-	//test case for playercreation
-	 @Test
-	    public void testPlayerCreation() {
-		 
-	        Player player = new Player(100, 10, 5);
-	        
-	        assertEquals(100, player.getHealth());
-	        assertEquals(10, player.getStrength());
-	        assertEquals(5, player.getAttack());
-	        
-	    }
+public class ArenaTest {
+
+    @Test
+    public void testDiceRoll() {
+        Dice dice = new Dice();
+        int rollResult = dice.roll();
+        assertTrue(rollResult >= 1 && rollResult <= 6, "Dice roll should be between 1 and 6");
     }
-## MatchTest
-Explaination:
 
-1. Class and Method Declaration:
+    @Test
+    public void testHealthReduction() {
+        Player player = new Player("Player1", 100, 10, 10);
+        assertEquals(100, player.getHealth());
+        player.reduceHealth(30);
+        assertEquals(70, player.getHealth());
+        player.reduceHealth(100);
+        assertEquals(0, player.getHealth());
+    }
 
-* The MatchTest class is a JUnit test case for the Match class.
-* The fight() method is annotated with @Test, indicating that it is a test case.
+    @Test
+    public void testIsAlive() {
+        Player player = new Player("Player1", 100, 10, 10);
+        assertTrue(player.isAlive());
+        player.reduceHealth(100);
+        assertFalse(player.isAlive());
+    }
 
-2. Test Method:
+    @Test
+    public void testFight_Player1WinsWithMagic() {
+        Dice mockAttackDice = mock(Dice.class);
+        Dice mockDefenseDice = mock(Dice.class);
 
-* The fight() method creates two Player objects with specific attributes (player1 and player2).
-* It creates a Match object match between the two players.
-* It calls the fight() method of the Match class to simulate the match.
-* It then verifies the outcome of the match by checking the health of the players.
-* If player1's health drops to 0 or below, player2 should win; otherwise, player1 should win.
+        when(mockAttackDice.roll()).thenReturn(10);
+        when(mockDefenseDice.roll()).thenReturn(3);
 
-3. Assertions:
+        Player player1 = new Player("Player1", 100, 10, 10);
+        Player player2 = new Player("Player2", 50, 8, 12);
 
-* The assertEquals() method is used to compare the actual and expected values.
-* In this case, it ensures that the health of the winning player is greater than 0 after the match.
+        Arena magicalArena = new Arena(mockAttackDice, mockDefenseDice);
 
-This test case ensures that the fight() method in the Match class behaves as expected and correctly determines the outcome of a match between two players in the Magical Arena. It helps verify the correctness and reliability of the match simulation logic.
+        magicalArena.fight(player1, player2);
+
+        assertTrue(player2.getHealth() <= 0 || !player2.isAlive(), "Player2 should be defeated");
+        assertTrue(player1.isAlive(), "Player1 should be alive");
+    }
 
 
-    package com.arena;
-    import static org.junit.jupiter.api.Assertions.*;
-    import org.junit.jupiter.api.Test;
+    @Test
+    public void testFight_Player2Wins() {
+        Dice mockAttackDice = mock(Dice.class);
+        Dice mockDefenseDice = mock(Dice.class);
 
-    //This class gives the unit test case for the Match class
-    class MatchTest {
+        when(mockAttackDice.roll()).thenReturn(7);
+        when(mockDefenseDice.roll()).thenReturn(3);
 
-	//Unit test case for the fight method
-	@Test
-	    public void fight() {
-		 
-	        // Create two players for the match
-	        Player player1 = new Player(50, 5, 10);
-	        Player player2 = new Player(100, 10, 5);
+        Player player1 = new Player("Player1", 40, 10, 8);
+        Player player2 = new Player("Player2", 100, 15, 12);
 
-	        // Create a match between the two players
-	        Match match = new Match(player1, player2);
+        Arena arena = new Arena(mockAttackDice, mockDefenseDice);
+        arena.fight(player1, player2);
 
-	        // Simulate the match
-	        match.fight();
+        assertTrue(player1.getHealth() <= 0 || !player1.isAlive(), "Player1 should be defeated");
+        assertTrue(player2.isAlive(), "Player2 should be alive");
+    }
 
-	        // Verify the outcome of the match
-	        if (player1.getHealth() <= 0) {
-	            // Player B should win if player A's health drops to 0 or below
-	            assertEquals(true, player2.getHealth() > 0);
-	        } else {
-	            // Player A should win if player B's health drops to 0 or below
-	            assertEquals(true, player1.getHealth() > 0);
-	        }
-	    }
-        }
+    @Test
+    public void testFight_HealthTie() {
+        Dice mockAttackDice = mock(Dice.class);
+        Dice mockDefenseDice = mock(Dice.class);
+        when(mockAttackDice.roll()).thenReturn(4);
+        when(mockDefenseDice.roll()).thenReturn(4);
+        Player player1 = new Player("Player1", 100, 10, 10);
+        Player player2 = new Player("Player2", 100, 10, 10);
+        Arena arena = new Arena(mockAttackDice, mockDefenseDice);
+        arena.fight(player1, player2);
+        assertTrue(player1.isAlive() || player2.isAlive());
+    }
+
+    @Test
+    public void testAttackDamageCalculation() {
+        Dice mockAttackDice = mock(Dice.class);
+        Dice mockDefenseDice = mock(Dice.class);
+        when(mockAttackDice.roll()).thenReturn(4);
+        when(mockDefenseDice.roll()).thenReturn(3);
+        Player player1 = new Player("Player1", 100, 10, 5);
+        Player player2 = new Player("Player2", 100, 8, 10);
+        Arena arena = new Arena(mockAttackDice, mockDefenseDice);
+        arena.performAttack(player1, player2);
+        int expectedDamage = Math.max(0, (player1.getAttack() * 4) - (player2.getStrength() * 3));
+        assertEquals(expectedDamage, 0);
+    }
+}
