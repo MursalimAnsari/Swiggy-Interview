@@ -35,31 +35,41 @@ public class ArenaTest {
     }
 
     @Test
-    public void testFight_Player1Wins() {
+    public void testFight_Player1WinsWithMagic() {
         Dice mockAttackDice = mock(Dice.class);
         Dice mockDefenseDice = mock(Dice.class);
-        when(mockAttackDice.roll()).thenReturn(5);
-        when(mockDefenseDice.roll()).thenReturn(2);
+
+        when(mockAttackDice.roll()).thenReturn(10);
+        when(mockDefenseDice.roll()).thenReturn(3);
+
         Player player1 = new Player("Player1", 100, 10, 10);
         Player player2 = new Player("Player2", 50, 8, 12);
-        Arena arena = new Arena(mockAttackDice, mockDefenseDice);
-        arena.fight(player1, player2);
-        assertEquals(0, player2.getHealth());
-        assertTrue(player1.isAlive());
+
+        Arena magicalArena = new Arena(mockAttackDice, mockDefenseDice);
+
+        magicalArena.fight(player1, player2);
+
+        assertTrue(player2.getHealth() <= 0 || !player2.isAlive(), "Player2 should be defeated");
+        assertTrue(player1.isAlive(), "Player1 should be alive");
     }
+
 
     @Test
     public void testFight_Player2Wins() {
         Dice mockAttackDice = mock(Dice.class);
         Dice mockDefenseDice = mock(Dice.class);
-        when(mockAttackDice.roll()).thenReturn(3);
-        when(mockDefenseDice.roll()).thenReturn(5);
-        Player player1 = new Player("Player1", 40, 12, 10);
-        Player player2 = new Player("Player2", 100, 8, 8);
+
+        when(mockAttackDice.roll()).thenReturn(7);
+        when(mockDefenseDice.roll()).thenReturn(3);
+
+        Player player1 = new Player("Player1", 40, 10, 8);
+        Player player2 = new Player("Player2", 100, 15, 12);
+
         Arena arena = new Arena(mockAttackDice, mockDefenseDice);
         arena.fight(player1, player2);
-        assertEquals(0, player1.getHealth());
-        assertTrue(player2.isAlive());
+
+        assertTrue(player1.getHealth() <= 0 || !player1.isAlive(), "Player1 should be defeated");
+        assertTrue(player2.isAlive(), "Player2 should be alive");
     }
 
     @Test

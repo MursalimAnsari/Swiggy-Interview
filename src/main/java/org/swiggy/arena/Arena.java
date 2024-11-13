@@ -11,8 +11,8 @@ public class Arena {
     }
 
     public Arena(Dice mockAttackDice, Dice mockDefenseDice) {
-        this.attackDice = attackDice;
-        this.defenseDice = defenseDice;
+        this.attackDice = mockAttackDice;
+        this.defenseDice = mockDefenseDice;
     }
 
 
